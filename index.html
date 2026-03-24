@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f5f5f5; min-height: 100vh; padding: 40px 20px; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 28px; color: #333; margin-bottom: 8px; }
+    p.subtitle { color: #666; margin-bottom: 30px; }
+    .card { background: white; border-radius: 10px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 18px; margin-bottom: 16px; color: #333; }
+    input[type="url"] { width: 100%; padding: 12px; font-size: 15px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 12px; outline: none; }
+    input[type="url"]:focus { border-color: #0066cc; }
+    button { padding: 12px 24px; background: #0066cc; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; }
+    button:hover { background: #0052a3; }
+    button.refresh { background: #f0f0f0; color: #333; font-size: 13px; padding: 8px 16px; }
+    button.refresh:hover { background: #e0e0e0; }
+    .result { margin-top: 16px; padding: 14px; background: #f0f7ff; border-radius: 6px; display: none; }
+    .result a { color: #0066cc; word-break: break-all; font-weight: 500; }
+    .copy-btn { margin-left: 10px; padding: 4px 10px; font-size: 12px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; padding: 10px 8px; border-bottom: 2px solid #eee; color: #666; font-weight: 600; }
+    td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; color: #333; word-break: break-all; }
+    tr:hover td { background: #fafafa; }
+    .badge { display: inline-block; background: #e8f4e8; color: #2d7a2d; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
+    .empty { text-align: center; color: #999; padding: 30px; }
+    .loading { text-align: center; color: #999; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
+    <p class="subtitle">Paste a long URL and get a short link instantly.</p>
+    <div class="card">
+      <h2>Create a short link</h2>
+      <input type="url" id="url-input" placeholder="https://example.com/very/long/url..." />
+      <button onclick="shortenUrl()">Shorten URL</button>
+      <div class="result" id="result">
+        <strong>Your short link:</strong><br><br>
+        <a id="short-link" href="#" target="_blank"></a>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>All links &amp; click counts
+        <button class="refresh" onclick="loadLinks()" style="float:right">↻ Refresh</button>
+      </h2>
+      <div id="links-container"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+  <script>
+    const API = "https://os81p4yzp7.execute-api.ap-south-1.amazonaws.com";
+    async function shortenUrl() {
+      const input = document.getElementById("url-input");
+      const url = input.value.trim();
+      if (!url) { alert("Please enter a URL first!"); return; }
+      try {
+        const res = await fetch(`${API}/links`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
+        const data = await res.json();
+        const linkEl = document.getElementById("short-link");
+        linkEl.href = data.short_url;
+        linkEl.textContent = data.short_url;
+        document.getElementById("result").style.display = "block";
+        input.value = "";
+        setTimeout(loadLinks, 500);
+      } catch (err) { alert("Error: " + err.message); }
+    }
+    function copyLink() {
+      navigator.clipboard.writeText(document.getElementById("short-link").textContent);
+      alert("Copied!");
+    }
+    async function loadLinks() {
+      const container = document.getElementById("links-container");
+      container.innerHTML = '<div class="loading">Loading...</div>';
+      try {
+        const res = await fetch(`${API}/admin/links`);
+        const links = await res.json();
+        if (!links.length) { container.innerHTML = '<div class="empty">No links yet!</div>'; return; }
+        links.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        container.innerHTML = `<table><thead><tr><th>Short Code</th><th>Original URL</th><th>Clicks</th><th>Created</th></tr></thead><tbody>${links.map(l => `<tr><td><a href="${API}/${l.code}" target="_blank">${l.code}</a></td><td>${l.target_url}</td><td><span class="badge">${l.click_count}</span></td><td>${new Date(l.created_at).toLocaleDateString()}</td></tr>`).join("")}</tbody></table>`;
+      } catch (err) { container.innerHTML = '<div class="empty">Could not load links.</div>'; }
+    }
+    loadLinks();
+  </script>
+</body>
+</html>
