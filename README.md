@@ -1,28 +1,25 @@
 # 🔗 AWS URL Shortener
 
 A fully serverless URL shortener with click analytics, built on AWS. Create short links instantly and track how many times each link has been clicked — no servers to manage.
+## 🏗️ Architecture Diagram
+
+![Architecture Diagram](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Gemini_Generated_Image_f5tb3vf5tb3vf5tb.png)
 
 ---
 
 ## 📸 Screenshots
 
 ### Frontend — Create & Track Links
-![URL Shortener Frontend](screenshots/frontend.png)
+![URL Shortener Frontend](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(524).png)
 > The S3-hosted frontend showing shortened links for YouTube, GitHub, Netflix, and Google with live click counts.
 
 ### DynamoDB — Items Table
-![DynamoDB Items](screenshots/dynamodb-items.png)
+![DynamoDB Items](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(525).png)
 > All 4 links stored in DynamoDB with `code`, `click_count`, `created_at`, and `target_url` attributes.
 
 ### API Gateway — Routes
-![API Gateway Routes](screenshots/api-gateway.png)
+![API Gateway Routes](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(526).png)
 > API Gateway configured with `$default` route pointing to the Lambda function.
-
----
-
-## 🏗️ Architecture Diagram
-
-![Architecture Diagram](screenshots/architecture.png)
 
 ---
 
