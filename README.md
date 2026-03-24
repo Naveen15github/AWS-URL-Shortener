@@ -14,11 +14,11 @@ A fully serverless URL shortener with click analytics, built on AWS. Create shor
 > The S3-hosted frontend showing shortened links for YouTube, GitHub, Netflix, and Google with live click counts.
 
 ### DynamoDB — Items Table
-![DynamoDB Items](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(525).png)
+![DynamoDB Items](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(526).png)
 > All 4 links stored in DynamoDB with `code`, `click_count`, `created_at`, and `target_url` attributes.
 
 ### API Gateway — Routes
-![API Gateway Routes](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(526).png)
+![API Gateway Routes](https://github.com/Naveen15github/AWS-URL-Shortener/blob/3badf75f278b461745c55d219fc1a80555d1f1a7/Screenshot%20(525).png)
 > API Gateway configured with `$default` route pointing to the Lambda function.
 
 ---
